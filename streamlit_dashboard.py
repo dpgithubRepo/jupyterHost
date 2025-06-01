@@ -46,14 +46,14 @@ graph = st.selectbox("Select a graph to display:", [
     "Escalation Patterns by Assignee"
 ])
 
-# Display the selected graph and corresponding data table
+# Display the selected graph and corresponding data table with counts
 if graph == "Ticket Volume Over Time":
     st.subheader("Ticket Volume Over Time")
     filtered_df['ID'].resample('D').count().plot(figsize=(12, 6))
     plt.title('Ticket Volume Over Time')
     st.pyplot(plt)
     plt.close()
-    st.dataframe(filtered_df[['ID']])
+    st.dataframe(filtered_df[['ID']].resample('D').count().rename(columns={'ID': 'Count'}))
 
 elif graph == "Top 15 Most Frequently Repeated Issues":
     st.subheader("Top 15 Most Frequently Repeated Issues")
@@ -62,7 +62,7 @@ elif graph == "Top 15 Most Frequently Repeated Issues":
     plt.title('Top 15 Most Frequently Repeated Issues')
     st.pyplot(plt)
     plt.close()
-    st.dataframe(filtered_df[filtered_df['Subject'].isin(top_15.index)])
+    st.dataframe(filtered_df[filtered_df['Subject'].isin(top_15.index)].groupby('Subject').size().reset_index(name='Count'))
 
 elif graph == "Issue Categories Distribution":
     st.subheader("Issue Categories Distribution")
@@ -72,7 +72,7 @@ elif graph == "Issue Categories Distribution":
     plt.ylabel('')
     st.pyplot(plt)
     plt.close()
-    st.dataframe(filtered_df[['Category']])
+    st.dataframe(filtered_df.groupby('Category').size().reset_index(name='Count'))
 
 elif graph == "Ticket Resolution by Assignee":
     st.subheader("Ticket Resolution by Assignee")
@@ -80,7 +80,7 @@ elif graph == "Ticket Resolution by Assignee":
     plt.title('Ticket Resolution by Assignee')
     st.pyplot(plt)
     plt.close()
-    st.dataframe(filtered_df[['Assignee']])
+    st.dataframe(filtered_df.groupby('Assignee').size().reset_index(name='Count'))
 
 elif graph == "Heatmap of Ticket Volume":
     st.subheader("Heatmap of Ticket Volume")
@@ -91,7 +91,7 @@ elif graph == "Heatmap of Ticket Volume":
     plt.title('Heatmap of Ticket Volume')
     st.pyplot(plt)
     plt.close()
-    st.dataframe(filtered_df[['DayOfWeek', 'Hour']])
+    st.dataframe(filtered_df.groupby(['DayOfWeek', 'Hour']).size().reset_index(name='Count'))
 
 elif graph == "Word Cloud of Issue Subjects":
     st.subheader("Word Cloud of Issue Subjects")
@@ -100,7 +100,7 @@ elif graph == "Word Cloud of Issue Subjects":
     plt.axis('off')
     st.pyplot(plt)
     plt.close()
-    st.dataframe(filtered_df[['Subject']])
+    st.dataframe(filtered_df.groupby('Subject').size().reset_index(name='Count'))
 
 elif graph == "Ticket Volume by Weekday and Hour":
     st.subheader("Ticket Volume by Weekday and Hour")
@@ -109,7 +109,7 @@ elif graph == "Ticket Volume by Weekday and Hour":
     plt.title('Ticket Volume by Weekday and Hour')
     st.pyplot(plt)
     plt.close()
-    st.dataframe(filtered_df[['DayOfWeek', 'Hour']])
+    st.dataframe(filtered_df.groupby(['DayOfWeek', 'Hour']).size().reset_index(name='Count'))
 
 elif graph == "Requester-Assignee Interaction Frequency":
     st.subheader("Requester-Assignee Interaction Frequency")
@@ -118,7 +118,7 @@ elif graph == "Requester-Assignee Interaction Frequency":
     plt.title('Requester-Assignee Interaction Frequency')
     st.pyplot(plt)
     plt.close()
-    st.dataframe(filtered_df[['Requester', 'Assignee']])
+    st.dataframe(filtered_df.groupby(['Requester', 'Assignee']).size().reset_index(name='Count'))
 
 elif graph == "Issue Lifecycle Stages":
     st.subheader("Issue Lifecycle Stages")
@@ -127,7 +127,7 @@ elif graph == "Issue Lifecycle Stages":
     plt.title('Issue Lifecycle Stages')
     st.pyplot(plt)
     plt.close()
-    st.dataframe(filtered_df[['Status']])
+    st.dataframe(filtered_df.groupby('Status').size().reset_index(name='Count'))
 
 elif graph == "Escalation Patterns by Assignee":
     st.subheader("Escalation Patterns by Assignee")
@@ -138,4 +138,4 @@ elif graph == "Escalation Patterns by Assignee":
         plt.title('Escalation Patterns by Assignee')
         st.pyplot(plt)
         plt.close()
-        st.dataframe(filtered_df[filtered_df['Escalated'] == 'Escalated'][['Assignee']])
+        st.dataframe(filtered_df[filtered_df['Escalated'] == 'Escalated'].groupby('Assignee').size().reset_index(name='Count'))
