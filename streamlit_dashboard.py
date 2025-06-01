@@ -23,6 +23,10 @@ def categorize_issue(subject):
 
 df['Category'] = df['Subject'].apply(categorize_issue)
 
+# Add DayOfWeek and Hour columns for heatmaps
+df['DayOfWeek'] = df.index.dayofweek
+df['Hour'] = df.index.hour
+
 # Streamlit app
 st.title("Zendesk Ticket Analytics & Dashboard")
 
@@ -84,8 +88,6 @@ elif graph == "Ticket Resolution by Assignee":
 
 elif graph == "Heatmap of Ticket Volume":
     st.subheader("Heatmap of Ticket Volume")
-    filtered_df['DayOfWeek'] = filtered_df.index.dayofweek
-    filtered_df['Hour'] = filtered_df.index.hour
     heatmap_data = filtered_df.groupby(['DayOfWeek', 'Hour']).size().unstack()
     sns.heatmap(heatmap_data, cmap='YlGnBu', annot=True, fmt='.0f')
     plt.title('Heatmap of Ticket Volume')
